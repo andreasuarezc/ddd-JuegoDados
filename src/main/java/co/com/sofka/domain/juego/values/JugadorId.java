@@ -1,4 +1,6 @@
 package co.com.sofka.domain.juego.values;
 
-public class JugadorId {
+import co.com.sofka.domain.generic.Identity;
+
+public class JugadorId extends Identity {
 }
