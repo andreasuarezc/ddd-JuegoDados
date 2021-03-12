@@ -11,7 +11,7 @@ public class JuegoCreado extends DomainEvent {
     private final Map<JugadorId, Jugador> jugadores;
 
     public JuegoCreado(Map<JugadorId, Jugador> jugadores) {
-        super("NoMeMientas.JuegoCreado");
+        super("nomemientas.juegocreado");
         this.jugadores = jugadores;
     }
 

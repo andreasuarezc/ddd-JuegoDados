@@ -2,10 +2,10 @@ package co.com.sofka.domain.juego;
 
 import co.com.sofka.domain.generic.AggregateEvent;
 import co.com.sofka.domain.generic.DomainEvent;
+import co.com.sofka.domain.juego.events.RondaIniciada;
 import co.com.sofka.domain.juego.events.JuegoCreado;
 import co.com.sofka.domain.juego.values.JuegoId;
 import co.com.sofka.domain.juego.values.JugadorId;
-
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +15,7 @@ Aggregate Event es una clase abstracta que permite al agregado hacer uso de unos
  */
 public class Juego extends AggregateEvent<JuegoId> {
     protected Map<JugadorId, Jugador> jugadores;
+    protected Boolean isIniciado;
 
     /*un evento que pasa al principio del juego cuando lo creo,
     aplico un evento de dominio que se llama Juego Creado,
@@ -31,11 +32,15 @@ public class Juego extends AggregateEvent<JuegoId> {
         u otro comportameinto, entonces
         */
         appendChange(new JuegoCreado(jugadores)).apply();
-
     }
     //Este juego base lo creo como un privado
     private Juego(JuegoId entityId){
         super(entityId);
+        subscribe(new JuegoChange(this));
+    }
+
+    public void iniciarRonda(){
+        appendChange(new RondaIniciada()).apply();
     }
 
     /*Temgo una lista de eventos, este método lo que me va a permitir es
