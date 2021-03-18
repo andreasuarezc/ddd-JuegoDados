@@ -2,58 +2,56 @@ package co.com.sofka.domain.juego;
 
 import co.com.sofka.domain.generic.AggregateEvent;
 import co.com.sofka.domain.generic.DomainEvent;
-import co.com.sofka.domain.juego.events.RondaIniciada;
+import co.com.sofka.domain.juego.events.JuegoInicializado;
+import co.com.sofka.domain.juego.events.JugadorAdicionado;
 import co.com.sofka.domain.juego.events.JuegoCreado;
+import co.com.sofka.domain.juego.factory.JugadorFactory;
+import co.com.sofka.domain.juego.values.Capital;
 import co.com.sofka.domain.juego.values.JuegoId;
 import co.com.sofka.domain.juego.values.JugadorId;
+import co.com.sofka.domain.juego.values.Nombre;
+import co.com.sofka.domain.ronda.values.RondaId;
 import java.util.List;
 import java.util.Map;
 
-//Cada agregado lanza eventos de dominio. Despues en la capa de Infraestructura, esos eventos de dominio los puedo traducir a una tabla.
-/*
-Aggregate Event es una clase abstracta que permite al agregado hacer uso de unos métodos abstractos, tener ciertos comportamientos.
- */
 public class Juego extends AggregateEvent<JuegoId> {
     protected Map<JugadorId, Jugador> jugadores;
     protected Boolean isIniciado;
+    protected RondaId rondaId;
 
-    /*un evento que pasa al principio del juego cuando lo creo,
-    aplico un evento de dominio que se llama Juego Creado,
-    el cual es creado con estos jugadores por ahora,
 
-     */
-    public Juego(JuegoId entityId, Map<JugadorId, Jugador> jugadores) {
+    public Juego(JuegoId entityId, JugadorFactory jugadorFactory) {
         super(entityId);
-        /*juegoCreado es el evento de dominio, se expresa en pasado, el evento ya pasó.
-        El juego es creado con esa lista de jugadores.
-        Cuando le digo al objeto nuevo juego, y le paso los jugadores,
-        la consecuencia es juegoCreado, los atributos que tiene el juego creado son los jugadores y su agregado identificado.
-        Para poder reconstruir ese agregado, minimamente debo tener un evento, esos eventos los acumulo en una base de datos. Ejemplo, ya tengo el juego creado,
-        u otro comportameinto, entonces
-        */
-        appendChange(new JuegoCreado(jugadores)).apply();
+        appendChange(new JuegoCreado(entityId)).apply();
+        jugadorFactory.jugadores().forEach(jugador -> adicionarJugador(jugador.identity(), jugador.nombre(),  jugador.capital()));
     }
-    //Este juego base lo creo como un privado
-    private Juego(JuegoId entityId){
+    public Juego(JuegoId entityId){
         super(entityId);
         subscribe(new JuegoChange(this));
     }
 
-    public void iniciarRonda(){
-        appendChange(new RondaIniciada()).apply();
-    }
+    //public void iniciarRonda(){appendChange(new RondaIniciada()).apply();}
 
-    /*Temgo una lista de eventos, este método lo que me va a permitir es
-    traerme el Juego a partir de unso eventos que ya pasaron.
-    Es como reconstruir mi agregado a partir de ese evento.
-    Me pasan un identificador, identifico el juego y despues le digo al juego que cré que aplique todos los eventos.
-    Le estoy diciendo que reconstruya el agregado a traves de los eventos.
-    Puedo decir en qué estado está el juego a partir de lo que ya pasó.
-    Tengo un Set de eventos que los puedo guardar, los puedo persistir,
-    */
-    public static Juego from (JuegoId juegoId, List<DomainEvent> events){
-        var juego = new Juego(juegoId);
+    public static Juego from (JuegoId entityId, List<DomainEvent> events){
+        var juego = new Juego(entityId);
         events.forEach(juego:: applyEvent);
         return juego;
+    }
+
+    public void adicionarJugador(JugadorId jugadorId, Nombre nombre, Capital capital) {
+        appendChange(new JugadorAdicionado(jugadorId, nombre, capital)).apply();
+    }
+
+    public void iniciarJuego() {
+        var jugadoresIds = jugadores.keySet();
+        appendChange(new JuegoInicializado(jugadoresIds)).apply();
+    }
+
+    public RondaId rondaId() {
+        return rondaId;
+    }
+
+    public Boolean IsIniciado() {
+        return isIniciado;
     }
 }

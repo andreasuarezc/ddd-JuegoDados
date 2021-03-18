@@ -1,13 +1,13 @@
-package co.com.sofka.domain.juego.events;
+package co.com.sofka.domain.ronda.events;
 
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.domain.juego.values.JuegoId;
 
-public class JuegoCreado extends DomainEvent {
+public class RondaFinalizada extends DomainEvent {
     private final JuegoId juegoId;
 
-    public JuegoCreado(JuegoId juegoId) {
-        super("nomemientas.juego.juegocreado");
+    public RondaFinalizada(JuegoId juegoId) {
+        super("nomemientan.ronda.rondafinalizada");
         this.juegoId = juegoId;
     }
 
