@@ -1,17 +1,20 @@
-package co.com.sofka.domain.juego.events;
+package co.com.sofka.domain.juego.command;
 
-import co.com.sofka.domain.generic.DomainEvent;
+import co.com.sofka.domain.generic.Command;
 import co.com.sofka.domain.juego.values.Capital;
+import co.com.sofka.domain.juego.values.JuegoId;
 import co.com.sofka.domain.juego.values.JugadorId;
 import co.com.sofka.domain.juego.values.Nombre;
 
-public class JugadorAdicionado extends DomainEvent {
+public class AdicionarJugador implements Command {
+    private final JuegoId juegoId;
     private final JugadorId jugadorId;
     private final Nombre nombre;
     private final Capital capital;
 
-    public JugadorAdicionado(JugadorId jugadorId, Nombre nombre, Capital capital) {
-        super("nomemientas.juego.jugadoradicionado");
+
+    public AdicionarJugador(JuegoId juegoId, JugadorId jugadorId, Nombre nombre, Capital capital) {
+        this.juegoId = juegoId;
         this.jugadorId = jugadorId;
         this.nombre = nombre;
         this.capital = capital;
@@ -21,11 +24,15 @@ public class JugadorAdicionado extends DomainEvent {
         return jugadorId;
     }
 
+    public Nombre getNombre() {
+        return nombre;
+    }
+
     public Capital getCapital() {
         return capital;
     }
 
-    public Nombre getNombre() {
-        return nombre;
+    public JuegoId getJuegoId() {
+        return juegoId;
     }
 }

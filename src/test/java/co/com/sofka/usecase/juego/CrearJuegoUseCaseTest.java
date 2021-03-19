@@ -27,13 +27,13 @@ class CrearJuegoUseCaseTest {
                 JugadorId.of("cccc"), new Nombre("Carlos"),
                 JugadorId.of("dddd"), new Nombre("Mario")
         );
-        var capiltales = Map.of(
+        var capitales = Map.of(
                 JugadorId.of("xxxx"), new Capital(400),
                 JugadorId.of("ffff"), new Capital(500),
                 JugadorId.of("cccc"), new Capital(400),
                 JugadorId.of("dddd"), new Capital(500)
         );
-        var command = new CrearJuego(capiltales, nombres);
+        var command = new CrearJuego(capitales, nombres);
         var useCase = new CrearJuegoUseCase();
 
         var events = UseCaseHandler.getInstance()
